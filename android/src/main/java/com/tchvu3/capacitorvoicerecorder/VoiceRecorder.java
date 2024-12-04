@@ -87,6 +87,40 @@ public class VoiceRecorder extends Plugin {
     }
 
     @PluginMethod
+    public void startRecordingWithCompression(PluginCall call) {
+        Int sampleRate = call.getInt("sampleRate");
+
+        if (!CustomMediaRecorder.canPhoneCreateMediaRecorder(getContext())) {
+            call.reject(Messages.CANNOT_RECORD_ON_THIS_PHONE);
+            return;
+        }
+
+        if (!doesUserGaveAudioRecordingPermission()) {
+            call.reject(Messages.MISSING_PERMISSION);
+            return;
+        }
+
+        if (this.isMicrophoneOccupied()) {
+            call.reject(Messages.MICROPHONE_BEING_USED);
+            return;
+        }
+
+        if (mediaRecorder != null) {
+            call.reject(Messages.ALREADY_RECORDING);
+            return;
+        }
+
+        try {
+            mediaRecorder = new CustomMediaRecorder(getContext());
+            mediaRecorder.startRecordingWithCompression(sampleRate);
+            call.resolve(ResponseGenerator.successResponse());
+        } catch (Exception exp) {
+            mediaRecorder = null;
+            call.reject(Messages.FAILED_TO_RECORD, exp);
+        }
+    }
+
+    @PluginMethod
     public void stopRecording(PluginCall call) {
         if (mediaRecorder == null) {
             call.reject(Messages.RECORDING_HAS_NOT_STARTED);
@@ -99,7 +133,7 @@ public class VoiceRecorder extends Plugin {
             RecordData recordData = new RecordData(
                 readRecordedFileAsBase64(recordedFile),
                 getMsDurationOfAudioFile(recordedFile.getAbsolutePath()),
-                "audio/aac"
+                "audio/mpeg"
             );
             if (recordData.getRecordDataBase64() == null || recordData.getMsDuration() < 0) {
                 call.reject(Messages.EMPTY_RECORDING);

@@ -5,6 +5,7 @@ export declare class VoiceRecorderImpl {
     private pendingResult;
     static canDeviceVoiceRecord(): Promise<GenericResponse>;
     startRecording(): Promise<GenericResponse>;
+    startRecordingWithCompression(): Promise<GenericResponse>;
     stopRecording(): Promise<RecordingData>;
     static hasAudioRecordingPermission(): Promise<GenericResponse>;
     static requestAudioRecordingPermission(): Promise<GenericResponse>;
