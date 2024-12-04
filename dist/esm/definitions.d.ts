@@ -22,7 +22,9 @@ export interface VoiceRecorderPlugin {
     requestAudioRecordingPermission(): Promise<GenericResponse>;
     hasAudioRecordingPermission(): Promise<GenericResponse>;
     startRecording(): Promise<GenericResponse>;
-    startRecordingWithCompression(sampleRate: number): Promise<GenericResponse>;
+    startRecordingWithCompression(options: {
+        sampleRate: number;
+    }): Promise<GenericResponse>;
     stopRecording(): Promise<RecordingData>;
     pauseRecording(): Promise<GenericResponse>;
     resumeRecording(): Promise<GenericResponse>;
