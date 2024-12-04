@@ -40,7 +40,7 @@ public class CustomMediaRecorder {
         mediaRecorder.start();
         currentRecordingStatus = CurrentRecordingStatus.RECORDING;
     }
-    public void startRecordingWithCompresion(int sampleRate) throws IOException {
+    public void startRecordingWithCompression(int sampleRate) throws IOException {
         // On Android with MPEG4/AAC, bitRate affects file size, surprisingly, sample rate does not.
         // So we adjust the bit rate for better compression, based on requested sample rate.
         int  bitRate = 32000; // default bit rate
