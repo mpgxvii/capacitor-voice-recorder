@@ -21,22 +21,38 @@ public class CustomMediaRecorder {
     private void generateMediaRecorder() throws IOException {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mediaRecorder.setAudioEncodingBitRate(96000);
-        mediaRecorder.setAudioSamplingRate(44100);
         setRecorderOutputFile();
-        mediaRecorder.prepare();
     }
 
     private void setRecorderOutputFile() throws IOException {
         File outputDir = context.getCacheDir();
-        outputFile = File.createTempFile("voice_record_temp", ".aac", outputDir);
+        outputFile = File.createTempFile("voice_record_temp", ".m4a", outputDir);
         outputFile.deleteOnExit();
         mediaRecorder.setOutputFile(outputFile.getAbsolutePath());
     }
 
-    public void startRecording() {
+    public void startRecording() throws IOException {
+        mediaRecorder.setAudioEncodingBitRate(32000);
+        mediaRecorder.setAudioSamplingRate(44100);
+        mediaRecorder.prepare();
+        mediaRecorder.start();
+        currentRecordingStatus = CurrentRecordingStatus.RECORDING;
+    }
+    public void startRecordingWithCompression(int sampleRate) throws IOException {
+        // On Android with MPEG4/AAC, bitRate affects file size, surprisingly, sample rate does not.
+        // So we adjust the bit rate for better compression, based on requested sample rate.
+        int  bitRate = 32000; // default bit rate
+        if (sampleRate < 30000) {
+            bitRate = 16384;
+        }
+        if (sampleRate < 16000) {
+            bitRate = 8192;
+        }
+        mediaRecorder.setAudioSamplingRate(sampleRate);
+        mediaRecorder.setAudioEncodingBitRate(bitRate);
+        mediaRecorder.prepare();
         mediaRecorder.start();
         currentRecordingStatus = CurrentRecordingStatus.RECORDING;
     }

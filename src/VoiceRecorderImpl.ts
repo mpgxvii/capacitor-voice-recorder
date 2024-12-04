@@ -51,6 +51,25 @@ export class VoiceRecorderImpl {
       .catch(this.onFailedToStartRecording.bind(this));
   }
 
+  public async startRecordingWithCompression(): Promise<GenericResponse> {
+    if (this.mediaRecorder != null) {
+      throw alreadyRecordingError();
+    }
+    const deviceCanRecord = await VoiceRecorderImpl.canDeviceVoiceRecord();
+    if (!deviceCanRecord.value) {
+      throw deviceCannotVoiceRecordError();
+    }
+    const havingPermission = await VoiceRecorderImpl.hasAudioRecordingPermission().catch(() => successResponse());
+    if (!havingPermission.value) {
+      throw missingPermissionError();
+    }
+
+    return navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(this.onSuccessfullyStartedRecording.bind(this))
+      .catch(this.onFailedToStartRecording.bind(this));
+  }
+
   public async stopRecording(): Promise<RecordingData> {
     if (this.mediaRecorder == null) {
       throw recordingHasNotStartedError();

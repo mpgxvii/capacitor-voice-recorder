@@ -22,6 +22,10 @@ export class VoiceRecorderWeb extends WebPlugin implements VoiceRecorderPlugin {
     return this.voiceRecorderInstance.startRecording();
   }
 
+  public startRecordingWithCompression(): Promise<GenericResponse> {
+    return this.voiceRecorderInstance.startRecordingWithCompression();
+  }
+
   public stopRecording(): Promise<RecordingData> {
     return this.voiceRecorderInstance.stopRecording();
   }
