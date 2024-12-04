@@ -18,7 +18,7 @@ public class CustomMediaRecorder {
         generateMediaRecorder();
     }
 
-    private void generateMediaRecorder() {
+    private void generateMediaRecorder() throws IOException {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
