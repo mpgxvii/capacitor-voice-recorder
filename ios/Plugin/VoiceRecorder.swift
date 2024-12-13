@@ -7,6 +7,10 @@ public class VoiceRecorder: CAPPlugin {
 
     private var customMediaRecorder: CustomMediaRecorder? = nil
     
+    static let DEFAULT_AUDIO_ENCODER = "AAC"
+    static let DEFAULT_SAMPLE_RATE = 44100
+    static let DEFAULT_BIT_RATE = 16384
+    
     @objc func canDeviceVoiceRecord(_ call: CAPPluginCall) {
         call.resolve(ResponseGenerator.successResponse())
     }
@@ -44,6 +48,41 @@ public class VoiceRecorder: CAPPlugin {
         }
         
         let successfullyStartedRecording = customMediaRecorder!.startRecording()
+        if successfullyStartedRecording == false {
+            customMediaRecorder = nil
+            call.reject(Messages.CANNOT_RECORD_ON_THIS_PHONE)
+        } else {
+            call.resolve(ResponseGenerator.successResponse())
+        }
+    }
+
+    @objc func startRecordingWithCompression(_ call: CAPPluginCall) {
+        if(!doesUserGaveAudioRecordingPermission()) {
+            call.reject(Messages.MISSING_PERMISSION)
+            return
+        }
+
+        if(customMediaRecorder != nil) {
+            call.reject(Messages.ALREADY_RECORDING)
+            return
+        }
+
+        customMediaRecorder = CustomMediaRecorder()
+        if(customMediaRecorder == nil) {
+            call.reject(Messages.CANNOT_RECORD_ON_THIS_PHONE)
+            return
+        }
+
+        let sampleRate = call.getDouble("sampleRate") ?? Double(VoiceRecorder.DEFAULT_SAMPLE_RATE)
+        let bitRate = call.getInt("bitRate") ?? VoiceRecorder.DEFAULT_BIT_RATE
+        let audioEncoder = call.getString("audioEncoder") ?? VoiceRecorder.DEFAULT_AUDIO_ENCODER
+
+        let successfullyStartedRecording = customMediaRecorder!.startRecordingWithCompression(
+            sampleRate: sampleRate, 
+            bitRate: bitRate, 
+            audioEncoder: audioEncoder
+        )
+
         if successfullyStartedRecording == false {
             customMediaRecorder = nil
             call.reject(Messages.CANNOT_RECORD_ON_THIS_PHONE)
