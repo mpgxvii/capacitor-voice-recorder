@@ -24,6 +24,10 @@ import java.io.IOException;
 public class VoiceRecorder extends Plugin {
 
     static final String RECORD_AUDIO_ALIAS = "voice recording";
+    static final String DEFAULT_AUDIO_ENCODER = "AAC";
+    static final int DEFAULT_SAMPLE_RATE = 44100;
+    static final int DEFAULT_BIT_RATE = 16384;
+
     private CustomMediaRecorder mediaRecorder;
 
     @PluginMethod
@@ -88,7 +92,9 @@ public class VoiceRecorder extends Plugin {
 
     @PluginMethod
     public void startRecordingWithCompression(PluginCall call) {
-        int sampleRate = call.getInt("sampleRate", 44100);
+        int sampleRate = call.getInt("sampleRate", DEFAULT_SAMPLE_RATE);
+        int bitRate = call.getInt("bitRate", DEFAULT_BIT_RATE)
+        String audioEncoder = call.getString("audioEncoder", DEFAULT_AUDIO_ENCODER)
 
         if (!CustomMediaRecorder.canPhoneCreateMediaRecorder(getContext())) {
             call.reject(Messages.CANNOT_RECORD_ON_THIS_PHONE);
@@ -112,7 +118,7 @@ public class VoiceRecorder extends Plugin {
 
         try {
             mediaRecorder = new CustomMediaRecorder(getContext());
-            mediaRecorder.startRecordingWithCompression(sampleRate);
+            mediaRecorder.startRecordingWithCompression(sampleRate, bitRate, audioEncoder);
             call.resolve(ResponseGenerator.successResponse());
         } catch (Exception exp) {
             mediaRecorder = null;
