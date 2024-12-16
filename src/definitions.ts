@@ -34,7 +34,7 @@ export interface VoiceRecorderPlugin {
   startRecordingWithCompression(options: {
     sampleRate: number,
     bitRate: number,
-    audioEncder: string,
+    audioEncoder: string,
   }): Promise<GenericResponse>;
 
   stopRecording(): Promise<RecordingData>;
