@@ -93,8 +93,8 @@ public class VoiceRecorder extends Plugin {
     @PluginMethod
     public void startRecordingWithCompression(PluginCall call) {
         int sampleRate = call.getInt("sampleRate", DEFAULT_SAMPLE_RATE);
-        int bitRate = call.getInt("bitRate", DEFAULT_BIT_RATE)
-        String audioEncoder = call.getString("audioEncoder", DEFAULT_AUDIO_ENCODER)
+        int bitRate = call.getInt("bitRate", DEFAULT_BIT_RATE);
+        String audioEncoder = call.getString("audioEncoder", DEFAULT_AUDIO_ENCODER);
 
         if (!CustomMediaRecorder.canPhoneCreateMediaRecorder(getContext())) {
             call.reject(Messages.CANNOT_RECORD_ON_THIS_PHONE);
