@@ -84,6 +84,29 @@ class CustomMediaRecorder {
         }
     }
 
+    private func getMimeType(for format: AudioFormatID) -> String {
+        switch format {
+            case kAudioFormatMPEG4AAC:
+                return "audio/mpeg"
+            case kAudioFormatAMR:
+                return "audio/amr"
+            case kAudioFormatAMR_WB:
+                return "audio/amr-wb"
+            case kAudioFormatOpus:
+                return "audio/ogg"
+            default:
+                return "application/octet-stream" // Default MIME type
+        }
+    }
+
+    public func getMimeType() -> String? {
+        guard let settings = audioRecorder?.settings,
+            let format = settings[AVFormatIDKey] as? Int else {
+            return nil
+        }
+        return getMimeType(for: AudioFormatID(format))
+    }
+
     public func stopRecording() {
         do {
             audioRecorder.stop()
