@@ -11,6 +11,7 @@ public class CustomMediaRecorder {
     private final Context context;
     private MediaRecorder mediaRecorder;
     private File outputFile;
+    private String mimeType;
     private CurrentRecordingStatus currentRecordingStatus = CurrentRecordingStatus.NONE;
 
     public CustomMediaRecorder(Context context) throws IOException {
@@ -30,6 +31,8 @@ public class CustomMediaRecorder {
         outputFile = File.createTempFile("voice_record_temp", extension, outputDir);
         outputFile.deleteOnExit();
         mediaRecorder.setOutputFile(outputFile.getAbsolutePath());
+        // Also set the mime type
+        mimeType = getMimeTypeForOutputFormat(outputFormat);
     }
 
     private String getFileExtensionForOutputFormat(int outputFormat) {
@@ -47,6 +50,27 @@ public class CustomMediaRecorder {
             default:
                 return ".tmp";
         }
+    }
+
+    private String getMimeTypeForOutputFormat(int outputFormat) {
+        switch (outputFormat) {
+            case MediaRecorder.OutputFormat.THREE_GPP:
+                return "audio/3gpp";
+            case MediaRecorder.OutputFormat.MPEG_4:
+                return "audio/mpeg";
+            case MediaRecorder.OutputFormat.AMR_NB:
+                return "audio/amr";
+            case MediaRecorder.OutputFormat.AMR_WB:
+                return "audio/amr-wb";
+            case MediaRecorder.OutputFormat.OGG:
+                return "audio/ogg";
+            default:
+                return "application/octet-stream";
+        }
+    }
+
+    public String getMimeType() {
+        return mimeType;
     }
 
     public void startRecording() throws IOException {

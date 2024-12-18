@@ -99,6 +99,8 @@ public class VoiceRecorder: CAPPlugin {
         
         customMediaRecorder?.stopRecording()
         
+        let mimeType = customMediaRecorder?.getMimeType() ?? "application/octet-stream"
+
         let audioFileUrl = customMediaRecorder?.getOutputFile()
         if(audioFileUrl == nil) {
             customMediaRecorder = nil
@@ -107,7 +109,7 @@ public class VoiceRecorder: CAPPlugin {
         }
         let recordData = RecordData(
             recordDataBase64: readFileAsBase64(audioFileUrl),
-            mimeType: "audio/aac",
+            mimeType: mimeType,
             msDuration: getMsDurationOfAudioFile(audioFileUrl)
         )
         customMediaRecorder = nil

@@ -2,10 +2,10 @@ import Foundation
 import AVFoundation
 
 class CustomMediaRecorder {
-    
     private var recordingSession: AVAudioSession!
     private var audioRecorder: AVAudioRecorder!
     private var audioFilePath: URL!
+    private var mimeType: String!
     private var originalRecordingSessionCategory: AVAudioSession.Category!
     private var status = CurrentRecordingStatus.NONE
 
@@ -21,6 +21,8 @@ class CustomMediaRecorder {
             try recordingSession.setActive(true)
 
             audioFilePath = getDirectoryToSaveAudioFile().appendingPathComponent("\(UUID().uuidString).aac")
+            mimeType = "audio/mpeg"
+
             let settings = [
                 AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
                 AVSampleRateKey: 44100,
@@ -66,6 +68,7 @@ class CustomMediaRecorder {
             }
 
             audioFilePath.appendPathExtension(fileExtension)
+            mimeType = getMimeType(for: format)
 
             let settings: [String: Any] = [
                 AVFormatIDKey: Int(format),
@@ -82,6 +85,25 @@ class CustomMediaRecorder {
         } catch {
             return false
         }
+    }
+
+    private func getMimeType(for format: AudioFormatID) -> String {
+        switch format {
+            case kAudioFormatMPEG4AAC:
+                return "audio/mpeg"
+            case kAudioFormatAMR:
+                return "audio/amr"
+            case kAudioFormatAMR_WB:
+                return "audio/amr-wb"
+            case kAudioFormatOpus:
+                return "audio/ogg"
+            default:
+                return "application/octet-stream" // Default MIME type
+        }
+    }
+
+    public func getMimeType() -> String? {
+        return mimeType
     }
 
     public func stopRecording() {
