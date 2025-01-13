@@ -203,7 +203,7 @@ public class VoiceRecorder extends Plugin {
         } catch (IOException exp) {
             return null;
         }
-        return Base64.encodeToString(bArray, Base64.DEFAULT);
+        return Base64.encodeToString(bArray, Base64.NO_WRAP);
     }
 
     private int getMsDurationOfAudioFile(String recordedFilePath) {
